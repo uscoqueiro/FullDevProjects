@@ -1,11 +1,7 @@
 ﻿// ReSharper disable All
 
 using System.Globalization;
-using System.Net;
-using System.Numerics;
-using System.Security.Principal;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 #pragma warning disable CS8601
 
 namespace Xpto.Core
@@ -28,22 +24,7 @@ namespace Xpto.Core
         public static void Init()
         {
             LoadCustomers();
-
-            //Customers.Add(new Customer
-            //{
-            //    Code = 12,
-            //    Name = "João da Silva",
-            //    Nickname = "JS LTDA",
-            //    BirthDate = new DateTime(1985, 08, 19),
-            //    PersonType = "PF",
-            //    Identity = "132323233",
-            //    Address = "Rua Xpto 1523 São Paulo - SP - CEP: 08841-522",
-            //    Phone = "11589654782",
-            //    Email = "joao@gmail.com",
-            //    Note = "Xpto"
-            //});
-
-
+ 
             while (true)
             {
                 Clear();
@@ -78,12 +59,12 @@ namespace Xpto.Core
 
             Console.WriteLine();
 
-            var exists = int.TryParse(Console.ReadLine(), out var action);
+            var success = int.TryParse(Console.ReadLine(), out var action);
 
-            while (!exists)
+            while (!success)
             {
                 Console.WriteLine("Ação inválida");
-                exists = int.TryParse(Console.ReadLine(), out action);
+                success = int.TryParse(Console.ReadLine(), out action);
             }
 
             return action;
@@ -527,10 +508,11 @@ namespace Xpto.Core
                 using (var writer = new StreamWriter(file))
                 {
                     writer.WriteLine(header);
-                    var line = new StringBuilder();
-
+ 
                     foreach (var c in Customers)
                     {
+                        var line = new StringBuilder();
+
                         AppendField(line, c.Id);
                         AppendField(line, c.Code);
                         AppendField(line, c.Name);
