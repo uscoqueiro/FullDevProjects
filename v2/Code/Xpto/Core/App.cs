@@ -26,6 +26,16 @@ namespace Xpto.Core
 
         public static void Init()
         {
+
+            //var cep = "4844220";
+
+            //var zipCode = Convert.ToInt64(cep);
+            //var zipCodeFormat = zipCode.ToString("00000-000");
+
+            //var value = 56.3;
+            //var valueFormat = value.ToString("###,000.00");
+ 
+
             var customerRepository = new CustomerRepository();
             customerRepository.Load();
 

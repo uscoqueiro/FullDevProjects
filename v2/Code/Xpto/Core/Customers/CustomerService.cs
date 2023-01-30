@@ -123,6 +123,7 @@ namespace Xpto.Core.Customers
                     Console.WriteLine(("").PadRight(100, '-'));
                 }
 
+                Console.Write("0 - Voltar | 1 - Endereço | 2 - Telefone | 3 - E-mail ");
                 Console.WriteLine();
                 Console.Write("Informe o código do cliente ou 0 para sair: ");
             }
