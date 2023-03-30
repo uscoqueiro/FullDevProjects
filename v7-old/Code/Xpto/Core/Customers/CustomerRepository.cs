@@ -5,20 +5,13 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
-using Xpto.Core.Customers;
-using Xpto.Repositories.Shared;
-using Xpto.Repositories.Shared.Sql;
+using Xpto.Core.Shared.Sql;
 
-namespace Xpto.Repositories.Customers
+namespace Xpto.Core.Customers
 {
-    public class CustomerRepository : ICustomerRepository
+    public class CustomerRepository
     {
-        private readonly SqlConnectionProvider _connectionProvider;
-
-        public CustomerRepository(SqlConnectionProvider connectionProvider)
-        {
-            _connectionProvider = connectionProvider;
-        }
+        private readonly string connectionString = "server=.;database=db_xpto;user=xpto;password=123456";
 
         public Customer Insert(Customer customer)
         {
@@ -57,9 +50,7 @@ namespace Xpto.Repositories.Customers
             .AppendLine(" )")
             .AppendLine(" SET @code = SCOPE_IDENTITY(); ");
 
-
-
-            using var connection = new SqlConnection(this._connectionProvider.ConnectionString);
+            using var connection = new SqlConnection(this.connectionString);
 
             connection.Open();
 
@@ -84,6 +75,7 @@ namespace Xpto.Repositories.Customers
             .AppendLine(" UPDATE [tb_customer]")
             .AppendLine(" SET")
             .AppendLine(" [id] = @id,")
+            .AppendLine(" [code] = @code,")
             .AppendLine(" [name] = @name,")
             .AppendLine(" [nickname] = @nickname,")
             .AppendLine(" [birth_date] = @birth_date,")
@@ -97,7 +89,7 @@ namespace Xpto.Repositories.Customers
             .AppendLine(" [change_user_name] = @change_user_name")
             .AppendLine(" WHERE [id] = @id");
 
-            var connection = new SqlConnection(this._connectionProvider.ConnectionString);
+            var connection = new SqlConnection(this.connectionString);
             connection.Open();
 
             var cm = connection.CreateCommand();
@@ -117,7 +109,7 @@ namespace Xpto.Repositories.Customers
             .AppendLine(" DELETE FROM [tb_customer]")
             .AppendLine(" WHERE [id] = @id");
 
-            var connection = new SqlConnection(this._connectionProvider.ConnectionString);
+            var connection = new SqlConnection(this.connectionString);
             connection.Open();
             var cm = connection.CreateCommand();
 
@@ -137,7 +129,7 @@ namespace Xpto.Repositories.Customers
             var commandText = this.GetSelectQuery()
                     .AppendLine(" WHERE [id] = @id");
 
-            var connection = new SqlConnection(this._connectionProvider.ConnectionString);
+            var connection = new SqlConnection(this.connectionString);
             connection.Open();
             var cm = connection.CreateCommand();
 
@@ -165,7 +157,7 @@ namespace Xpto.Repositories.Customers
             var commandText = this.GetSelectQuery()
                .AppendLine(" WHERE [code] = @code");
 
-            var connection = new SqlConnection(this._connectionProvider.ConnectionString);
+            var connection = new SqlConnection(this.connectionString);
             connection.Open();
             var cm = connection.CreateCommand();
 
@@ -194,7 +186,7 @@ namespace Xpto.Repositories.Customers
 
             var commandText = this.GetSelectQuery();
 
-            var connection = new SqlConnection(this._connectionProvider.ConnectionString);
+            var connection = new SqlConnection(this.connectionString);
             connection.Open();
 
             var cm = connection.CreateCommand();
@@ -216,12 +208,13 @@ namespace Xpto.Repositories.Customers
         private static Customer LoadDataReader(SqlDataReader dataReader)
         {
             var customer = new Customer();
- 
-            customer.Id = dataReader.GetGuid("id");
-            customer.Code = dataReader.GetInt32("code");
-            customer.Name = dataReader.GetString( "name");
-            customer.Nickname = dataReader.GetString("nickname");
-            customer.BirthDate = dataReader.GetDateTime("birth_date");
+
+
+            customer.Id = DataReaderExtensions.GetGuid(dataReader, "id");
+            customer.Code = DataReaderExtensions.GetInt32(dataReader, "code");
+            customer.Name = DataReaderExtensions.GetString(dataReader, "name");
+            customer.Nickname = DataReaderExtensions.GetString(dataReader, "nickname");
+            customer.BirthDate = DataReaderExtensions.GetDateTime(dataReader, "birth_date");
 
 
             customer.PersonType = dataReader["person_type"].ToString();
@@ -263,10 +256,9 @@ namespace Xpto.Repositories.Customers
                 .AppendLine(" A.[change_date],")
                 .AppendLine(" A.[change_user_id],")
                 .AppendLine(" A.[change_user_name]")
-                .AppendLine(" FROM [tb_customer] AS A")
-                .AppendLine(" ORDER BY [code] DESC");
+                .AppendLine(" FROM [tb_customer] AS A");
 
-            var connection = new SqlConnection(this._connectionProvider.ConnectionString);
+            var connection = new SqlConnection(this.connectionString);
             connection.Open();
 
             var cm = connection.CreateCommand();
@@ -288,7 +280,7 @@ namespace Xpto.Repositories.Customers
                 .AppendLine(" COUNT(*) AS [COUNT]")
                 .AppendLine(" FROM [tb_customer] AS A");
 
-            var connection = new SqlConnection(this._connectionProvider.ConnectionString);
+            var connection = new SqlConnection(this.connectionString);
             connection.Open();
 
             var cm = connection.CreateCommand();

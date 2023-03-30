@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Xpto.UI.Customers;
 
 namespace Xpto.UI
 {

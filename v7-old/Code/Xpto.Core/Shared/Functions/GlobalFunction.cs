@@ -17,6 +17,14 @@ namespace Xpto.Core.Shared.Functions
                 return null;
         }
 
+        public static DateTime? GetBrToIsoDate(string text)
+        {
+            if (DateTime.TryParseExact(text, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt))
+                return dt;
+            else
+                return null;
+        }
+
         public static Guid GetGuid(string text)
         {
             if (Guid.TryParse(text, out var result))

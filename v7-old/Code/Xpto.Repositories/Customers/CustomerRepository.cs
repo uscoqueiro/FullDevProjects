@@ -88,6 +88,7 @@ namespace Xpto.Repositories.Customers
             .AppendLine(" [nickname] = @nickname,")
             .AppendLine(" [birth_date] = @birth_date,")
             .AppendLine(" [person_type] = @person_type,")
+            .AppendLine(" [identity] = @identity,")
             .AppendLine(" [note] = @note,")
             .AppendLine(" [creation_date] = @creation_date,")
             .AppendLine(" [creation_user_id] = @creation_user_id,")
@@ -216,33 +217,22 @@ namespace Xpto.Repositories.Customers
         private static Customer LoadDataReader(SqlDataReader dataReader)
         {
             var customer = new Customer();
- 
+
             customer.Id = dataReader.GetGuid("id");
             customer.Code = dataReader.GetInt32("code");
-            customer.Name = dataReader.GetString( "name");
+            customer.Name = dataReader.GetString("name");
             customer.Nickname = dataReader.GetString("nickname");
             customer.BirthDate = dataReader.GetDateTime("birth_date");
-
-
-            customer.PersonType = dataReader["person_type"].ToString();
-
-            customer.Note = dataReader["note"].ToString();
-
-            DateTime.TryParse(dataReader["creation_date"].ToString(), out var creationDate);
-            customer.CreationDate = creationDate;
-
-            Guid.TryParse(dataReader["creation_user_id"]?.ToString(), out var creationUserId);
-            customer.CreationUserId = creationUserId;
-
-            customer.CreationUserName = dataReader["creation_user_name"].ToString();
-
-            DateTime.TryParse(dataReader["change_date"].ToString(), out var changeDate);
-            customer.ChangeDate = changeDate;
-
-            Guid.TryParse(dataReader["change_user_id"]?.ToString(), out var changeUserId);
-            customer.ChangeUserId = changeUserId;
-
-            customer.ChangeUserName = dataReader["change_user_name"].ToString();
+            customer.PersonType = dataReader.GetString("person_type");
+            customer.Identity = dataReader.GetString("identity");
+            customer.Note = dataReader.GetString("note");
+            customer.CreationDate = dataReader.GetDateTime("creation_date");
+            customer.CreationUserId = dataReader.GetGuid("creation_user_id");
+            customer.CreationUserName = dataReader.GetString("creation_user_name");
+            customer.ChangeDate = dataReader.GetDateTime("change_date");
+            customer.ChangeUserId = dataReader.GetGuid("change_user_id");
+            customer.ChangeUserName = dataReader.GetString("change_user_name");
+    
             return customer;
         }
 
@@ -250,12 +240,12 @@ namespace Xpto.Repositories.Customers
         {
             var commandText = new StringBuilder()
                 .AppendLine(" SELECT")
-                .AppendLine(" A.[id],")
                 .AppendLine(" A.[code],")
                 .AppendLine(" A.[name],")
                 .AppendLine(" A.[nickname],")
                 .AppendLine(" A.[birth_date],")
                 .AppendLine(" A.[person_type],")
+                .AppendLine(" A.[identity],")
                 .AppendLine(" A.[note],")
                 .AppendLine(" A.[creation_date],")
                 .AppendLine(" A.[creation_user_id],")
@@ -312,6 +302,7 @@ namespace Xpto.Repositories.Customers
                 .AppendLine(" A.[nickname],")
                 .AppendLine(" A.[birth_date],")
                 .AppendLine(" A.[person_type],")
+                .AppendLine(" A.[identity],")
                 .AppendLine(" A.[note],")
                 .AppendLine(" A.[creation_date],")
                 .AppendLine(" A.[creation_user_id],")
@@ -330,54 +321,15 @@ namespace Xpto.Repositories.Customers
             cm.Parameters.Add(new SqlParameter("@name", customer.Name.GetDbValue()));
             cm.Parameters.Add(new SqlParameter("@nickname", customer.Nickname.GetDbValue()));
             cm.Parameters.Add(new SqlParameter("@birth_date", customer.BirthDate.GetDbValue()));
-
-
-            if (string.IsNullOrWhiteSpace(customer.PersonType))
-                cm.Parameters.Add(new SqlParameter("@person_type", DBNull.Value));
-
-            else
-                cm.Parameters.Add(new SqlParameter("@person_type", customer.PersonType));
-
-            if (string.IsNullOrWhiteSpace(customer.Identity))
-                cm.Parameters.Add(new SqlParameter("@identity", DBNull.Value));
-
-            else
-                cm.Parameters.Add(new SqlParameter("@identity", customer.Identity));
-
-            if (string.IsNullOrWhiteSpace(customer.Note))
-                cm.Parameters.Add(new SqlParameter("@note", DBNull.Value));
-
-            else
-                cm.Parameters.Add(new SqlParameter("@note", customer.Note));
-
-
-            if (customer.CreationDate == null || customer.CreationDate <= new DateTime(1900, 01, 01))
-                cm.Parameters.Add(new SqlParameter("@creation_date", DBNull.Value));
-            else
-                cm.Parameters.Add(new SqlParameter("@creation_date", customer.CreationDate));
-
-
-            cm.Parameters.Add(new SqlParameter("@creation_user_id", customer.CreationUserId));
-
-            if (string.IsNullOrWhiteSpace(customer.CreationUserName))
-                cm.Parameters.Add(new SqlParameter("@creation_user_name", DBNull.Value));
-
-            else
-                cm.Parameters.Add(new SqlParameter("@creation_user_name", customer.CreationUserName));
-
-
-            if (customer.ChangeDate == null)
-                cm.Parameters.Add(new SqlParameter("@change_date", DBNull.Value));
-            else
-                cm.Parameters.Add(new SqlParameter("@change_date", customer.ChangeDate));
-
+            cm.Parameters.Add(new SqlParameter("@person_type", customer.PersonType.GetDbValue()));
+            cm.Parameters.Add(new SqlParameter("@identity", customer.Identity.GetDbValue()));
+            cm.Parameters.Add(new SqlParameter("@note", customer.Note.GetDbValue()));
+            cm.Parameters.Add(new SqlParameter("@creation_date", customer.CreationDate.GetDbValue()));
+            cm.Parameters.Add(new SqlParameter("@creation_user_id", customer.CreationUserId.GetDbValue()));
+            cm.Parameters.Add(new SqlParameter("@creation_user_name", customer.CreationUserName.GetDbValue()));
+            cm.Parameters.Add(new SqlParameter("@change_date", customer.ChangeDate.GetDbValue()));
             cm.Parameters.Add(new SqlParameter("@change_user_id", customer.ChangeUserId));
-
-
-            if (string.IsNullOrWhiteSpace(customer.ChangeUserName))
-                cm.Parameters.Add(new SqlParameter("@change_user_name", DBNull.Value));
-            else
-                cm.Parameters.Add(new SqlParameter("@change_user_name", customer.ChangeUserName));
+            cm.Parameters.Add(new SqlParameter("@change_user_name", customer.ChangeUserName.GetDbValue()));
         }
 
     }

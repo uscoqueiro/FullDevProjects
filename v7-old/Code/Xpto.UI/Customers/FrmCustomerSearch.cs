@@ -28,25 +28,7 @@ namespace Xpto.UI.Customers
             {
                 this.dgvSearch.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
-            //lvwSearch.Columns.Clear();
-            //lvwSearch.Items.Clear();
-
-            //foreach (var col in dt.Columns)
-            //{
-            //    lvwSearch.Columns.Add(col.ToString());
-            //}
-
-            //foreach (DataRow row in dt.Rows)
-            //{
-            //    ListViewItem item = new ListViewItem(row[0].ToString());
-
-            //    lvwSearch.Items.Add(item);
-
-            //    for (int i = 1; i < dt.Columns.Count - 1; i++)
-            //    {
-            //        item.SubItems.Add(row[i].ToString());
-            //    }
-            //}
+         
         }
 
         private void btnExit_Click(object sender, EventArgs e)

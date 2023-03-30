@@ -4,6 +4,7 @@ using Xpto.Core.Customers;
 using Xpto.Repositories.Customers;
 using Xpto.Repositories.Shared.Sql;
 using Xpto.Services.Customers;
+using Xpto.UI.Customers;
 
 namespace Xpto.UI
 {
@@ -13,7 +14,6 @@ namespace Xpto.UI
         [STAThread]
         static void Main()
         {
-
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -38,6 +38,7 @@ namespace Xpto.UI
 
                     services.AddTransient<SqlConnectionProvider>(_ => new SqlConnectionProvider("server=.;database=db_xpto;user=xpto;password=123456"));
                     services.AddTransient<ICustomerRepository, CustomerRepository>();
+                    services.AddTransient<ICustomerAddressRepository, CustomerAddressRepository>();
                     services.AddTransient<ICustomerService, CustomerService>();
 
                 });

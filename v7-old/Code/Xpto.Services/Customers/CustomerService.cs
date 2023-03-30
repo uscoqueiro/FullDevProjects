@@ -1,45 +1,32 @@
 ﻿using System.Data;
 using Xpto.Core.Customers;
-using Xpto.Core.Shared.Results;
 
 namespace Xpto.Services.Customers
 {
-    public class CustomerService : ResultService, ICustomerService
+    public class CustomerService : ICustomerService
     {
         private readonly ICustomerRepository _repository;
 
         public CustomerService(ICustomerRepository repository)
         {
-            this.Messages = new List<string>();
             _repository = repository;
         }
-
-        public Customer Create(CustomerCreateParams createParams)
+ 
+        public Customer Create(Customer customer)
         {
-            var customer = Customer.Create(createParams, this);
-
-            if (this.Messages.Count > 0)
-                return null;
-
             _repository.Insert(customer);
             return customer;
         }
 
-        public Customer Update(Guid id, CustomerUpdateParams updateParams)
+        public Customer Update(Customer customer)
         {
-            var customer = this._repository.Get(id);
-            if (customer == null)
-                return null;
-
-            customer.Update(updateParams, this);
-            
             _repository.Update(customer);
             return customer;
         }
 
-        public void Delete(Guid id)
+        public void Delete(int code)
         {
-            var customer = _repository.Get(id);
+            var customer = _repository.Get(code);
 
             if (customer != null)
             {
@@ -47,9 +34,9 @@ namespace Xpto.Services.Customers
             }
         }
 
-        public Customer Get(Guid id)
+        public Customer Get(int code)
         {
-            var customer = _repository.Get(id);
+            var customer = _repository.Get(code);
             return customer;
         }
 
