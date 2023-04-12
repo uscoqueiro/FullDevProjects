@@ -240,6 +240,7 @@ namespace Xpto.Repositories.Customers
         {
             var commandText = new StringBuilder()
                 .AppendLine(" SELECT")
+                .AppendLine(" A.[id],")
                 .AppendLine(" A.[code],")
                 .AppendLine(" A.[name],")
                 .AppendLine(" A.[nickname],")

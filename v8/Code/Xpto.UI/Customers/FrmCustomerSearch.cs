@@ -23,7 +23,7 @@ namespace Xpto.UI.Customers
             var dt = this._customerService.LoadDataTable();
             this.dgvSearch.DataSource = dt;
             this.dgvSearch.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
-
+            this.dgvSearch.Columns[0].Visible = false;
             for (int i = 0; i < this.dgvSearch.Columns.Count; i++)
             {
                 this.dgvSearch.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -50,9 +50,9 @@ namespace Xpto.UI.Customers
 
         private void dgvSearch_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            var code = int.Parse(this.dgvSearch.SelectedRows[0].Cells[0].Value?.ToString());
+            var id = Guid.Parse(this.dgvSearch.SelectedRows[0].Cells[0].Value?.ToString());
 
-            var customer = this._customerService.Get(code);
+            var customer = this._customerService.Get(id);
             if (customer == null)
             {
                 return;

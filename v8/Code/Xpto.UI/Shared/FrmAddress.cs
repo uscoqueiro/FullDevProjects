@@ -1,4 +1,5 @@
-﻿using Xpto.Core.Shared.Entities;
+﻿using System.Net;
+using Xpto.Core.Shared.Entities;
 
 namespace Xpto.UI.Shared
 {
@@ -32,14 +33,9 @@ namespace Xpto.UI.Shared
             _address.ZipCode = this.txtZipCode.Text;
             _address.Note = this.txtNote.Text;
 
-            this.OnConfirmed(_address);
+            Confirmed?.Invoke(_address);
             this.Close();
 
-        }
-
-        protected virtual void OnConfirmed(Address address)
-        {
-            Confirmed?.Invoke(address);
         }
     }
 }

@@ -1,8 +1,9 @@
 using Xpto.Core.Shared.Entities;
+using Xpto.Core.Shared.Results;
 
 namespace Xpto.Core.Customers
 {
-    public class Customer
+    public partial class Customer
     {
         public Guid Id { get; set; }
         public int Code { get; set; }
@@ -34,6 +35,17 @@ namespace Xpto.Core.Customers
         public override string ToString()
         {
             return Name;
+        }
+   
+        public bool Validate(IResultService resultService)
+        {
+            if (string.IsNullOrWhiteSpace(this.Name))
+                resultService.Messages.Add("Nome inválido");
+
+            if (string.IsNullOrWhiteSpace(this.Identity))
+                resultService.Messages.Add("Identidade inválida");
+
+            return resultService.Messages.Count == 0;
         }
     }
 }
