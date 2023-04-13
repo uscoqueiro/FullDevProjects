@@ -1,4 +1,5 @@
 using Xpto.Core.Shared.Entities;
+using Xpto.Core.Shared.Params;
 using Xpto.Core.Shared.Results;
 
 namespace Xpto.Core.Customers
@@ -18,7 +19,14 @@ namespace Xpto.Core.Customers
             customer.BirthDate = updateParams.BirthDate;
             customer.PersonType = updateParams.PersonType;
             customer.Identity = updateParams.Identity;
-            customer.Addresses = updateParams.Addresses;
+
+            customer.Addresses = new List<Address>();
+            updateParams.Addresses ??= new List<AddressParams>();
+            foreach (var item in updateParams.Addresses)
+            {
+                customer.Addresses.Add(new Address(item));
+            }
+
             customer.Phones = updateParams.Phones;
             customer.Emails = updateParams.Emails;
             customer.Note = updateParams.Note;

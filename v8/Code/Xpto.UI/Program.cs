@@ -23,6 +23,8 @@ namespace Xpto.UI
             ApplicationConfiguration.Initialize();
 
             Application.Run(ServiceProvider.GetRequiredService<FrmApp>());
+ 
+
         }
 
         public static IServiceProvider ServiceProvider { get; private set; }

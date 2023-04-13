@@ -17,8 +17,14 @@ namespace Xpto.UI
 
             var frm = Program.ServiceProvider.GetRequiredService<FrmCustomerSearch>();
             frm.Show(this);
+            frm.Success += this.Frm_Success;
 
             //this._frmSearch.Show();
+        }
+
+        private void Frm_Success(string message)
+        {
+           this.lblMessage.Text = message;
         }
     }
 

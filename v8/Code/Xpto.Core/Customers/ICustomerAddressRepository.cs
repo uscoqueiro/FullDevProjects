@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Xpto.Core.Shared.Entities;
 
-namespace Xpto.Repositories.Customers;
+namespace Xpto.Core.Customers;
 
 public interface ICustomerAddressRepository
 {

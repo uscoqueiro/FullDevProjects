@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using Xpto.Core.Customers;
+using Xpto.Core.Shared.Entities;
 using Xpto.Repositories.Shared;
 using Xpto.Repositories.Shared.Sql;
 
@@ -14,10 +15,14 @@ namespace Xpto.Repositories.Customers
     public class CustomerRepository : ICustomerRepository
     {
         private readonly SqlConnectionProvider _connectionProvider;
+        private readonly ICustomerAddressRepository _customerAddressRepository;
 
-        public CustomerRepository(SqlConnectionProvider connectionProvider)
+        public CustomerRepository(
+            SqlConnectionProvider connectionProvider,
+            ICustomerAddressRepository _customerAddressRepository)
         {
             _connectionProvider = connectionProvider;
+            this._customerAddressRepository = _customerAddressRepository;
         }
 
         public Customer Insert(Customer customer)
@@ -56,9 +61,7 @@ namespace Xpto.Repositories.Customers
             .AppendLine(" @change_user_name")
             .AppendLine(" )")
             .AppendLine(" SET @code = SCOPE_IDENTITY(); ");
-
-
-
+ 
             using var connection = new SqlConnection(this._connectionProvider.ConnectionString);
 
             connection.Open();
@@ -75,6 +78,11 @@ namespace Xpto.Repositories.Customers
 
             customer.Code = (int)code.Value;
 
+            foreach (var address in customer.Addresses)
+            {
+                this._customerAddressRepository.Insert(customer.Code, address);
+            }
+ 
             return customer;
         }
 
@@ -109,6 +117,13 @@ namespace Xpto.Repositories.Customers
 
             cm.ExecuteNonQuery();
 
+            this._customerAddressRepository.DeleteByCustomer(customer.Code);
+
+            foreach (var address in customer.Addresses)
+            {
+                this._customerAddressRepository.Insert(customer.Code, address);
+            }
+
             connection.Close();
         }
 
@@ -127,6 +142,8 @@ namespace Xpto.Repositories.Customers
             cm.Parameters.Add(new SqlParameter("@id", id));
 
             var result = cm.ExecuteNonQuery();
+
+            //this._customerAddressRepository.DeleteByCustomer(customer.Code);
 
             connection.Close();
 
@@ -214,7 +231,7 @@ namespace Xpto.Repositories.Customers
             return l;
         }
 
-        private static Customer LoadDataReader(SqlDataReader dataReader)
+        private Customer LoadDataReader(SqlDataReader dataReader)
         {
             var customer = new Customer();
 
@@ -232,7 +249,9 @@ namespace Xpto.Repositories.Customers
             customer.ChangeDate = dataReader.GetDateTime("change_date");
             customer.ChangeUserId = dataReader.GetGuid("change_user_id");
             customer.ChangeUserName = dataReader.GetString("change_user_name");
-    
+ 
+            customer.Addresses = this._customerAddressRepository.FindByCustomer(customer.Code);
+ 
             return customer;
         }
 
@@ -249,10 +268,10 @@ namespace Xpto.Repositories.Customers
                 .AppendLine(" A.[identity],")
                 .AppendLine(" A.[note],")
                 .AppendLine(" A.[creation_date],")
-                .AppendLine(" A.[creation_user_id],")
+                //.AppendLine(" A.[creation_user_id],")
                 .AppendLine(" A.[creation_user_name],")
                 .AppendLine(" A.[change_date],")
-                .AppendLine(" A.[change_user_id],")
+                //.AppendLine(" A.[change_user_id],")
                 .AppendLine(" A.[change_user_name]")
                 .AppendLine(" FROM [tb_customer] AS A")
                 .AppendLine(" ORDER BY [code] DESC");

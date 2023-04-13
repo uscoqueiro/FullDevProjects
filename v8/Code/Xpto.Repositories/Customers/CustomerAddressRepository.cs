@@ -4,6 +4,7 @@
 
 using System.Data.SqlClient;
 using System.Text;
+using Xpto.Core.Customers;
 using Xpto.Core.Shared.Entities;
 using Xpto.Repositories.Shared.Sql;
 

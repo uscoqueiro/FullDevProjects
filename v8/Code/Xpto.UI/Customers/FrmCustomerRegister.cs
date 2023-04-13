@@ -2,6 +2,9 @@
 using Xpto.Core.Customers;
 using Xpto.Core.Shared.Entities;
 using Xpto.Core.Shared.Functions;
+using Xpto.Core.Shared.Params;
+using Xpto.Core.Shared.Results;
+using Xpto.UI.Customers.Delegates;
 using Xpto.UI.Shared;
 
 namespace Xpto.UI.Customers
@@ -10,8 +13,11 @@ namespace Xpto.UI.Customers
     {
         private readonly ICustomerService _customerService;
         public Customer _customer = new();
-        public delegate void CustomerChangeDelegate(Customer customer);
+
+
         public event CustomerChangeDelegate Change;
+        public event CustomerMessageDelegate Success;
+
 
         public FrmCustomerRegister(ICustomerService customerService)
         {
@@ -50,8 +56,15 @@ namespace Xpto.UI.Customers
                     Identity = this.txtIdentity.Text,
                     Note = this.txtNote.Text,
                     BirthDate = GlobalFunction.GetBrToIsoDate(this.mkdBirthDate.Text),
-                    PersonType = this.cboPersonType.Text
+                    PersonType = this.cboPersonType.Text,
+                    Addresses = new List<AddressParams>()
                 };
+
+                _customer.Addresses ??= new List<Address>();
+                foreach (var item in _customer.Addresses)
+                {
+                    customerParams.Addresses.Add(item.ToParams());
+                }
 
                 var result = this._customerService.Create(customerParams);
                 if (this._customerService.Messages.Count > 0)
@@ -93,12 +106,25 @@ namespace Xpto.UI.Customers
                     Identity = this.txtIdentity.Text,
                     Note = this.txtNote.Text,
                     BirthDate = GlobalFunction.GetBrToIsoDate(this.mkdBirthDate.Text),
-                    PersonType = this.cboPersonType.Text
+                    PersonType = this.cboPersonType.Text,
+                    Addresses = new List<AddressParams>()
                 };
+
+                _customer.Addresses ??= new List<Address>();
+                foreach (var item in _customer.Addresses)
+                {
+                    customerParams.Addresses.Add(item.ToParams());
+                }
 
                 _customer = this._customerService.Update(_customer.Id, customerParams);
 
-                MessageBox.Show("Cliente atualizado com sucesso!", "Cliente", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.Change.Invoke(_customer);
+                var msgText = "Cliente atualizado com sucesso!";
+
+                if (this.Success != null)
+                    this.Success(msgText);
+
+                MessageBox.Show(msgText, "Cliente", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception exception)
             {
@@ -135,7 +161,7 @@ namespace Xpto.UI.Customers
             MessageBox.Show("Cliente excluído com sucesso!", "Cliente", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         }
- 
+
         private void LoadAddresses()
         {
             this._customer.Addresses ??= new List<Address>();
@@ -169,8 +195,6 @@ namespace Xpto.UI.Customers
             }
         }
 
-
-
         private void btnAddAddress_Click(object sender, EventArgs e)
         {
             var frm = new FrmAddress();
@@ -178,9 +202,13 @@ namespace Xpto.UI.Customers
             frm.ShowDialog();
         }
 
-        private void AddAddress(Address address)
+        private void AddAddress(AddressParams addressParams)
         {
-            this._customer.Addresses.Add(address);
+            var resultService = new ResultService();
+            this._customer.AddAddress(addressParams, resultService);
+            if (resultService.Messages.Count > 0)
+                MessageBox.Show(resultService.Messages[0]);
+
             this.LoadAddresses();
         }
 

@@ -1,13 +1,14 @@
 ﻿using System.Net;
 using Xpto.Core.Shared.Entities;
+using Xpto.Core.Shared.Params;
 
 namespace Xpto.UI.Shared
 {
     public partial class FrmAddress : Form
     {
-        private Address _address = new Address();
+        private AddressParams _address = new AddressParams();
 
-        public delegate void AddressConfirmDelegate(Address address);
+        public delegate void AddressConfirmDelegate(AddressParams addressParams);
         public event AddressConfirmDelegate Confirmed;
 
         public FrmAddress()
@@ -22,7 +23,7 @@ namespace Xpto.UI.Shared
 
         private void btnConfirm_Click(object sender, EventArgs e)
         {
-            _address = new Address();
+            _address = new AddressParams();
 
             _address.Street = this.txtStreet.Text;
             _address.Number = this.txtNumber.Text;
@@ -33,7 +34,7 @@ namespace Xpto.UI.Shared
             _address.ZipCode = this.txtZipCode.Text;
             _address.Note = this.txtNote.Text;
 
-            Confirmed?.Invoke(_address);
+            Confirmed(_address);
             this.Close();
 
         }
